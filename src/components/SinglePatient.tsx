@@ -22,6 +22,63 @@ const SinglePatient = () => {
     return null;
   }
 
+  // const patientEntries = () => {
+  //   if (!patient.entries) {
+  //     return (<div></div>);
+  //   }
+
+  //   return patient.entries.map((entry) => {
+  //     const listKey = crypto.randomUUID()
+
+  //     return (
+  //     <div>
+  //       Date: {entry.date}
+  //       <br></br>
+  //       Description: {entry.description}
+  //       <br></br>
+  //       {entry.diagnosisCodes && (
+  //         <div>
+  //           Diagnosis codes:
+  //           <ul>
+  //             {entry.diagnosisCodes.map((code) => (
+  //               <li key={listKey}>
+  //                 {code}
+  //               </li>
+  //             ))}
+  //           </ul>
+  //         </div>
+  //       )}
+  //       <br></br>
+  //     </div>
+  // )});
+  // };
+
+  const patientEntries = () => {
+    if (!patient.entries) {
+      return <div></div>;
+    }
+
+    return patient.entries.map((entry) => (
+      <div>
+        Date: {entry.date}
+        <br></br>
+        Description: {entry.description}
+        <br></br>
+        {entry.diagnosisCodes && (
+          <div>
+            Diagnosis codes:
+            <ul>
+              {entry.diagnosisCodes.map((code) => (
+                <li key={code}>{code}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+        <br></br>
+      </div>
+    ));
+  };
+
   return (
     <div>
       <h3>{patient.name}</h3>
@@ -36,6 +93,9 @@ const SinglePatient = () => {
       ssn: {patient.ssn}
       <br></br>
       date of birth: {patient.dateOfBirth}
+      <br></br>
+      <h3>Entries</h3>
+      {patientEntries()}
     </div>
   );
 };
