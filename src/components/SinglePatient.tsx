@@ -1,7 +1,33 @@
 import patientService from "../services/patients";
 import { useState, useEffect } from "react";
-import { Patient } from "../types";
+import { Patient, Entry } from "../types";
 import { useParams } from "react-router-dom";
+
+interface PatientEntriesProps {
+  entries: Entry[]
+}
+
+const PatientEntries = ({ entries }: PatientEntriesProps) => {
+  return entries.map((entry) => (
+    <div key={entry.id}>
+      Date: {entry.date}
+      <br></br>
+      Description: {entry.description}
+      <br></br>
+      {entry.diagnosisCodes && (
+        <div>
+          Diagnosis codes:
+          <ul>
+            {entry.diagnosisCodes.map((code) => (
+              <li key={code}>{code}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+      <br></br>
+    </div>
+  ));
+};
 
 const SinglePatient = () => {
   const id = useParams().id;
@@ -22,63 +48,6 @@ const SinglePatient = () => {
     return null;
   }
 
-  // const patientEntries = () => {
-  //   if (!patient.entries) {
-  //     return (<div></div>);
-  //   }
-
-  //   return patient.entries.map((entry) => {
-  //     const listKey = crypto.randomUUID()
-
-  //     return (
-  //     <div>
-  //       Date: {entry.date}
-  //       <br></br>
-  //       Description: {entry.description}
-  //       <br></br>
-  //       {entry.diagnosisCodes && (
-  //         <div>
-  //           Diagnosis codes:
-  //           <ul>
-  //             {entry.diagnosisCodes.map((code) => (
-  //               <li key={listKey}>
-  //                 {code}
-  //               </li>
-  //             ))}
-  //           </ul>
-  //         </div>
-  //       )}
-  //       <br></br>
-  //     </div>
-  // )});
-  // };
-
-  const patientEntries = () => {
-    if (!patient.entries) {
-      return <div></div>;
-    }
-
-    return patient.entries.map((entry) => (
-      <div>
-        Date: {entry.date}
-        <br></br>
-        Description: {entry.description}
-        <br></br>
-        {entry.diagnosisCodes && (
-          <div>
-            Diagnosis codes:
-            <ul>
-              {entry.diagnosisCodes.map((code) => (
-                <li key={code}>{code}</li>
-              ))}
-            </ul>
-          </div>
-        )}
-        <br></br>
-      </div>
-    ));
-  };
-
   return (
     <div>
       <h3>{patient.name}</h3>
@@ -95,7 +64,7 @@ const SinglePatient = () => {
       date of birth: {patient.dateOfBirth}
       <br></br>
       <h3>Entries</h3>
-      {patientEntries()}
+      {patient.entries && <PatientEntries entries={patient.entries} />}
     </div>
   );
 };
