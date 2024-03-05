@@ -4,7 +4,7 @@ import { Patient, Entry } from "../types";
 import { useParams } from "react-router-dom";
 
 interface PatientEntriesProps {
-  entries: Entry[]
+  entries: Entry[];
 }
 
 const PatientEntries = ({ entries }: PatientEntriesProps) => {
