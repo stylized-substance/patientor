@@ -1,6 +1,7 @@
 import patientService from "../services/patients";
+import diagnosesService from "../services/diagnoses";
 import { useState, useEffect } from "react";
-import { Patient, Entry } from "../types";
+import { Patient, Entry, Diagnosis } from "../types";
 import { useParams } from "react-router-dom";
 
 interface PatientEntriesProps {
@@ -8,22 +9,51 @@ interface PatientEntriesProps {
 }
 
 const PatientEntries = ({ entries }: PatientEntriesProps) => {
+  const [diagnoses, setDiagnoses] = useState<Diagnosis[]>([]);
+
+  useEffect(() => {
+    const getDiagnoses = async (code: string) => {
+      const result = await diagnosesService.getOne(code);
+      if (result) {
+        setDiagnoses((diagnoses) => diagnoses.concat(result));
+      }
+    };
+
+    entries.forEach((entry) => {
+      if (entry.diagnosisCodes) {
+        entry.diagnosisCodes.forEach((code) => {
+          getDiagnoses(code);
+        });
+      }
+    });
+  }, [entries]);
+
+  const diagnosisSection = () => {
+    if (diagnoses.length === 0) {
+      return <div></div>;
+    }
+
+    return (
+      <div>
+        Diagnosis codes:
+        <ul>
+          {diagnoses.map((diagnosis) => (
+            <li key={diagnosis.code}>
+              {diagnosis.code} {diagnosis.name}
+            </li>
+          ))}
+        </ul>
+      </div>
+    );
+  };
+
   return entries.map((entry) => (
     <div key={entry.id}>
       Date: {entry.date}
       <br></br>
       Description: {entry.description}
       <br></br>
-      {entry.diagnosisCodes && (
-        <div>
-          Diagnosis codes:
-          <ul>
-            {entry.diagnosisCodes.map((code) => (
-              <li key={code}>{code}</li>
-            ))}
-          </ul>
-        </div>
-      )}
+      {diagnosisSection()}
       <br></br>
     </div>
   ));
