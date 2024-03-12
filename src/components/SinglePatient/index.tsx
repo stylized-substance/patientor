@@ -2,12 +2,13 @@ import patientService from "../../services/patients";
 import { useState, useEffect } from "react";
 import { Patient } from "../../types";
 import { useParams } from "react-router-dom";
-import PatientEntries from "./PatientEntries";
+import PatientEntry from "./PatientEntry";
 
 const SinglePatient = () => {
   const id = useParams().id;
 
   const [patient, setPatient] = useState<Patient | null>(null);
+  // const [entries, setEntries] = useState<Entry[]>([]);
 
   useEffect(() => {
     if (id) {
@@ -18,6 +19,7 @@ const SinglePatient = () => {
       fetchPatient();
     }
   }, [id]);
+
 
   if (!patient) {
     return null;
@@ -39,7 +41,7 @@ const SinglePatient = () => {
       date of birth: {patient.dateOfBirth}
       <br></br>
       <h3>Entries</h3>
-      {patient.entries && <PatientEntries entries={patient.entries} />}
+      {patient.entries && patient.entries.map((entry) => <PatientEntry entry={entry} />)}
     </div>
   );
 };
