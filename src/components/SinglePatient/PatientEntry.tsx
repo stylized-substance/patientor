@@ -1,4 +1,4 @@
-import { Diagnosis, Entry, OccupationalHealthcareEntry, HospitalEntry, Healthcheck } from "../../types";
+import { Diagnosis, Entry, OccupationalHealthcareEntry, HospitalEntry, HealthCheck } from "../../types";
 import { useState, useEffect } from "react";
 import diagnosesService from "../../services/diagnoses";
 
@@ -18,7 +18,7 @@ interface HospitalEntryProps {
 }
 
 interface HealthCheckEntryProps {
-  entry: Healthcheck;
+  entry: HealthCheck;
   diagnoses?: Diagnosis[]
 }
 
@@ -42,7 +42,6 @@ const diagnosisSection = (diagnoses: Diagnosis[]) => {
 };
 
 const OccupationalHealthcareEntryInstance = ({ entry, diagnoses }: OccupationalHealthCareEntryProps) => {
-  console.log(entry);
   return (
     <div key={entry.id}>
       Date: {entry.date}
@@ -128,25 +127,20 @@ const PatientEntry = ({ entry }: EntryProps) => {
   switch (entry.type) {
     case "OccupationalHealthcare":
       return (
-        <div>
           <OccupationalHealthcareEntryInstance entry={entry} diagnoses={diagnoses} />
-        </div>
       );
     case "Hospital":
       return (
-        <div>
           <HospitalEntryInstance entry={entry} diagnoses={diagnoses} />
-        </div>
       );
     case "HealthCheck":
       return (
-        <div>
-          <HealthCheckEntryInstance entry={entry} diagnoses={diagnoses} />
-        </div>
+        <HealthCheckEntryInstance entry={entry} diagnoses={diagnoses} />
       );
+    default:
+      const _exhaustiveCheck: never = entry;
+      return _exhaustiveCheck;
   }
-
-  return null;
 };
 
 export default PatientEntry;
