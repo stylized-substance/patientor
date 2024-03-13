@@ -1,25 +1,16 @@
-import patientService from "../../services/patients";
-import { useState, useEffect } from "react";
 import { Patient } from "../../types";
 import { useParams } from "react-router-dom";
 import PatientEntry from "./PatientEntry";
+import { Typography, Box } from "@mui/material";
 
-const SinglePatient = () => {
+interface SinglePatientProps {
+  patients: Patient[]
+}
+
+const SinglePatient = ({ patients }: SinglePatientProps) => {
   const id = useParams().id;
-
-  const [patient, setPatient] = useState<Patient | null>(null);
-  // const [entries, setEntries] = useState<Entry[]>([]);
-
-  useEffect(() => {
-    if (id) {
-      const fetchPatient = async () => {
-        const patient: Patient = await patientService.getOne(id);
-        setPatient(patient);
-      };
-      fetchPatient();
-    }
-  }, [id]);
-
+  const patient = patients.find(patient => patient.id === id);
+  console.log(patient);
 
   if (!patient) {
     return null;
@@ -27,21 +18,31 @@ const SinglePatient = () => {
 
   return (
     <div>
-      <h3>{patient.name}</h3>
-      id: {patient.id}
-      <br></br>
-      name: {patient.name}
-      <br></br>
-      occupation: {patient.occupation}
-      <br></br>
-      gender: {patient.gender}
-      <br></br>
-      ssn: {patient.ssn}
-      <br></br>
-      date of birth: {patient.dateOfBirth}
-      <br></br>
-      <h3>Entries</h3>
-      {patient.entries && patient.entries.map((entry) => <PatientEntry entry={entry} />)}
+      <Typography variant="h4" sx={{pt: 4, pb: 2}}>
+        {patient.name}
+      </Typography>
+      <Box sx={{border: 1, p: 1}}>
+        <Typography variant="body1">
+          <b>id:</b> {patient.id}
+          <br></br>
+          <b>name:</b> {patient.name}
+          <br></br>
+          <b>occupation:</b> {patient.occupation}
+          <br></br>
+          <b>gender:</b> {patient.gender}
+          <br></br>
+          <b>ssn:</b> {patient.ssn}
+          <br></br>
+          <b>date of birth:</b> {patient.dateOfBirth}
+          <br></br>
+        </Typography>
+      </Box>
+      <Typography variant="h4" sx={{pt: 4, pb: 2}}>
+        Entries
+      </Typography>
+      <Typography variant="body1">
+        {patient.entries && patient.entries.map((entry) => <PatientEntry entry={entry} />)}
+      </Typography>
     </div>
   );
 };

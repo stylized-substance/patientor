@@ -1,7 +1,10 @@
 import { Diagnosis, Entry, OccupationalHealthcareEntry, HospitalEntry, HealthCheck } from "../../types";
 import { useState, useEffect } from "react";
 import diagnosesService from "../../services/diagnoses";
-
+import { Box } from "@mui/material";
+import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
+import FavoriteOutlinedIcon from '@mui/icons-material/FavoriteOutlined';
+import WorkOutlinedIcon from '@mui/icons-material/WorkOutlined';
 interface EntryProps {
   entry: Entry;
   diagnoses?: Diagnosis[]
@@ -29,7 +32,7 @@ const diagnosisSection = (diagnoses: Diagnosis[]) => {
 
   return (
     <div>
-      Diagnosis codes:
+      <b>Diagnosis codes:</b>
       <ul>
         {diagnoses.map((diagnosis) => (
           <li key={diagnosis.code}>
@@ -41,22 +44,44 @@ const diagnosisSection = (diagnoses: Diagnosis[]) => {
   );
 };
 
+const healthCheckIcon = (entry: HealthCheck) => {
+  switch (entry.healthCheckRating) {
+    case 0:
+      return (
+        <FavoriteOutlinedIcon sx={{color: "green"}} />
+      );
+      case 1:
+        return (
+          <FavoriteOutlinedIcon sx={{color: "yellow"}} />
+        );
+      case 2:
+        return (
+          <FavoriteOutlinedIcon sx={{color: "red"}} />
+        );
+      case 3:
+        return (
+          <FavoriteOutlinedIcon sx={{color: "red"}} />
+        );
+  }
+};
+
 const OccupationalHealthcareEntryInstance = ({ entry, diagnoses }: OccupationalHealthCareEntryProps) => {
   return (
     <div key={entry.id}>
-      Date: {entry.date}
+      <b>Date:</b> {entry.date}
+      <WorkOutlinedIcon />
       <br></br>
-      Description: {entry.description}
+      <b>Description:</b> {entry.description}
       <br></br>
-      Employer: {entry.employerName}
+      <b>Employer:</b> {entry.employerName}
       <br></br>
       {entry.sickLeave && 
       <div>
-        Sick leave: {entry.sickLeave.startDate} - {entry.sickLeave.endDate}
+        <b>Sick leave:</b> {entry.sickLeave.startDate} - {entry.sickLeave.endDate}
       </div>}
       {diagnoses && diagnosisSection(diagnoses)}
       <br></br>
-      Diagnosed by {entry.specialist}
+      <b>Diagnosed by</b> {entry.specialist}
       <br></br>
       <br></br>
     </div>
@@ -66,18 +91,19 @@ const OccupationalHealthcareEntryInstance = ({ entry, diagnoses }: OccupationalH
 const HospitalEntryInstance = ({ entry, diagnoses }: HospitalEntryProps) => {
   return (
     <div key={entry.id}>
-      Date: {entry.date}
+      <b><b>Date:</b></b> {entry.date}
+      <LocalHospitalIcon />
       <br></br>
-      Description: {entry.description}
+      <b>Description:</b> {entry.description}
       <br></br>
       <br></br>
-      Discharge:
+      <b>Discharge:</b>
       <ul>
         <li>
-          Date: {entry.discharge.date}
+          <b>Date:</b> {entry.discharge.date}
         </li>
         <li>
-          Criteria: {entry.discharge.criteria}
+          <b>Criteria:</b> {entry.discharge.criteria}
         </li>
       </ul>
       {diagnoses && diagnosisSection(diagnoses)}
@@ -92,11 +118,12 @@ const HospitalEntryInstance = ({ entry, diagnoses }: HospitalEntryProps) => {
 const HealthCheckEntryInstance = ({ entry, diagnoses }: HealthCheckEntryProps) => {
   return (
     <div key={entry.id}>
-      Date: {entry.date}
+      <b>Date:</b> {entry.date}
       <br></br>
-      Description: {entry.description}
+      <b>Description:</b> {entry.description}
       <br></br>
-      Health check rating: {entry.healthCheckRating}
+      <b>Health check rating:</b>
+      {healthCheckIcon(entry)}
       {diagnoses && diagnosisSection(diagnoses)}
       <br></br>
       Diagnosed by {entry.specialist}
@@ -127,15 +154,21 @@ const PatientEntry = ({ entry }: EntryProps) => {
   switch (entry.type) {
     case "OccupationalHealthcare":
       return (
+        <Box sx={{border: 1, p: 1, m: 1}}>
           <OccupationalHealthcareEntryInstance entry={entry} diagnoses={diagnoses} />
+        </Box>
       );
     case "Hospital":
       return (
+        <Box sx={{border: 1, p: 1, m: 1}}>
           <HospitalEntryInstance entry={entry} diagnoses={diagnoses} />
+        </Box>
       );
     case "HealthCheck":
       return (
-        <HealthCheckEntryInstance entry={entry} diagnoses={diagnoses} />
+        <Box sx={{border: 1, p: 1, m: 1}}>
+          <HealthCheckEntryInstance entry={entry} diagnoses={diagnoses} />
+        </Box>
       );
     default:
       const _exhaustiveCheck: never = entry;
