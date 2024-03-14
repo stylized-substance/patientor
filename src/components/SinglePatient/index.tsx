@@ -4,13 +4,12 @@ import PatientEntry from "./PatientEntry";
 import { Typography, Box } from "@mui/material";
 
 interface SinglePatientProps {
-  patients: Patient[]
+  patients: Patient[];
 }
 
 const SinglePatient = ({ patients }: SinglePatientProps) => {
   const id = useParams().id;
-  const patient = patients.find(patient => patient.id === id);
-  console.log(patient);
+  const patient = patients.find((patient) => patient.id === id);
 
   if (!patient) {
     return null;
@@ -18,10 +17,10 @@ const SinglePatient = ({ patients }: SinglePatientProps) => {
 
   return (
     <div>
-      <Typography variant="h4" sx={{pt: 4, pb: 2}}>
+      <Typography variant="h4" sx={{ pt: 4, pb: 2 }}>
         {patient.name}
       </Typography>
-      <Box sx={{border: 1, p: 1}}>
+      <Box sx={{ border: 1, p: 1 }}>
         <Typography variant="body1">
           <b>id:</b> {patient.id}
           <br></br>
@@ -37,11 +36,16 @@ const SinglePatient = ({ patients }: SinglePatientProps) => {
           <br></br>
         </Typography>
       </Box>
-      <Typography variant="h4" sx={{pt: 4, pb: 2}}>
+      <Typography variant="h4" sx={{ pt: 4, pb: 2 }}>
         Entries
       </Typography>
-      <Typography variant="body1">
-        {patient.entries && patient.entries.map((entry) => <PatientEntry entry={entry} />)}
+      <Typography component={"span"} variant="body1">
+        {patient.entries &&
+          patient.entries.map((entry) => (
+            <div key={entry.id}>
+              <PatientEntry entry={entry} />
+            </div>
+          ))}
       </Typography>
     </div>
   );

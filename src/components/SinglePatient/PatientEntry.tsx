@@ -1,28 +1,34 @@
-import { Diagnosis, Entry, OccupationalHealthcareEntry, HospitalEntry, HealthCheck } from "../../types";
+import {
+  Diagnosis,
+  Entry,
+  OccupationalHealthcareEntry,
+  HospitalEntry,
+  HealthCheck,
+} from "../../types";
 import { useState, useEffect } from "react";
 import diagnosesService from "../../services/diagnoses";
 import { Box } from "@mui/material";
-import LocalHospitalIcon from '@mui/icons-material/LocalHospital';
-import FavoriteOutlinedIcon from '@mui/icons-material/FavoriteOutlined';
-import WorkOutlinedIcon from '@mui/icons-material/WorkOutlined';
+import LocalHospitalIcon from "@mui/icons-material/LocalHospital";
+import FavoriteOutlinedIcon from "@mui/icons-material/FavoriteOutlined";
+import WorkOutlinedIcon from "@mui/icons-material/WorkOutlined";
 interface EntryProps {
   entry: Entry;
-  diagnoses?: Diagnosis[]
+  diagnoses?: Diagnosis[];
 }
 
 interface OccupationalHealthCareEntryProps {
   entry: OccupationalHealthcareEntry;
-  diagnoses?: Diagnosis[]
+  diagnoses?: Diagnosis[];
 }
 
 interface HospitalEntryProps {
   entry: HospitalEntry;
-  diagnoses?: Diagnosis[]
+  diagnoses?: Diagnosis[];
 }
 
 interface HealthCheckEntryProps {
   entry: HealthCheck;
-  diagnoses?: Diagnosis[]
+  diagnoses?: Diagnosis[];
 }
 
 const diagnosisSection = (diagnoses: Diagnosis[]) => {
@@ -47,25 +53,20 @@ const diagnosisSection = (diagnoses: Diagnosis[]) => {
 const healthCheckIcon = (entry: HealthCheck) => {
   switch (entry.healthCheckRating) {
     case 0:
-      return (
-        <FavoriteOutlinedIcon sx={{color: "green"}} />
-      );
-      case 1:
-        return (
-          <FavoriteOutlinedIcon sx={{color: "yellow"}} />
-        );
-      case 2:
-        return (
-          <FavoriteOutlinedIcon sx={{color: "red"}} />
-        );
-      case 3:
-        return (
-          <FavoriteOutlinedIcon sx={{color: "red"}} />
-        );
+      return <FavoriteOutlinedIcon sx={{ color: "green" }} />;
+    case 1:
+      return <FavoriteOutlinedIcon sx={{ color: "yellow" }} />;
+    case 2:
+      return <FavoriteOutlinedIcon sx={{ color: "red" }} />;
+    case 3:
+      return <FavoriteOutlinedIcon sx={{ color: "red" }} />;
   }
 };
 
-const OccupationalHealthcareEntryInstance = ({ entry, diagnoses }: OccupationalHealthCareEntryProps) => {
+const OccupationalHealthcareEntryInstance = ({
+  entry,
+  diagnoses,
+}: OccupationalHealthCareEntryProps) => {
   return (
     <div key={entry.id}>
       <b>Date:</b> {entry.date}
@@ -75,10 +76,12 @@ const OccupationalHealthcareEntryInstance = ({ entry, diagnoses }: OccupationalH
       <br></br>
       <b>Employer:</b> {entry.employerName}
       <br></br>
-      {entry.sickLeave && 
-      <div>
-        <b>Sick leave:</b> {entry.sickLeave.startDate} - {entry.sickLeave.endDate}
-      </div>}
+      {entry.sickLeave && (
+        <div>
+          <b>Sick leave:</b> {entry.sickLeave.startDate} -{" "}
+          {entry.sickLeave.endDate}
+        </div>
+      )}
       {diagnoses && diagnosisSection(diagnoses)}
       <br></br>
       <b>Diagnosed by</b> {entry.specialist}
@@ -91,7 +94,10 @@ const OccupationalHealthcareEntryInstance = ({ entry, diagnoses }: OccupationalH
 const HospitalEntryInstance = ({ entry, diagnoses }: HospitalEntryProps) => {
   return (
     <div key={entry.id}>
-      <b><b>Date:</b></b> {entry.date}
+      <b>
+        <b>Date:</b>
+      </b>{" "}
+      {entry.date}
       <LocalHospitalIcon />
       <br></br>
       <b>Description:</b> {entry.description}
@@ -115,7 +121,10 @@ const HospitalEntryInstance = ({ entry, diagnoses }: HospitalEntryProps) => {
   );
 };
 
-const HealthCheckEntryInstance = ({ entry, diagnoses }: HealthCheckEntryProps) => {
+const HealthCheckEntryInstance = ({
+  entry,
+  diagnoses,
+}: HealthCheckEntryProps) => {
   return (
     <div key={entry.id}>
       <b>Date:</b> {entry.date}
@@ -154,19 +163,22 @@ const PatientEntry = ({ entry }: EntryProps) => {
   switch (entry.type) {
     case "OccupationalHealthcare":
       return (
-        <Box sx={{border: 1, p: 1, m: 1}}>
-          <OccupationalHealthcareEntryInstance entry={entry} diagnoses={diagnoses} />
+        <Box sx={{ border: 1, p: 1, m: 1 }}>
+          <OccupationalHealthcareEntryInstance
+            entry={entry}
+            diagnoses={diagnoses}
+          />
         </Box>
       );
     case "Hospital":
       return (
-        <Box sx={{border: 1, p: 1, m: 1}}>
+        <Box sx={{ border: 1, p: 1, m: 1 }}>
           <HospitalEntryInstance entry={entry} diagnoses={diagnoses} />
         </Box>
       );
     case "HealthCheck":
       return (
-        <Box sx={{border: 1, p: 1, m: 1}}>
+        <Box sx={{ border: 1, p: 1, m: 1 }}>
           <HealthCheckEntryInstance entry={entry} diagnoses={diagnoses} />
         </Box>
       );
