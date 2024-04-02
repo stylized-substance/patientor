@@ -1,7 +1,8 @@
 import { Patient } from "../../types";
 import { useParams } from "react-router-dom";
 import PatientEntry from "./PatientEntry";
-import { Typography, Box } from "@mui/material";
+import AddEntryForm from "./AddEntryForm"
+import { Typography, Box, Button, } from "@mui/material";
 
 interface SinglePatientProps {
   patients: Patient[];
@@ -20,6 +21,10 @@ const SinglePatient = ({ patients }: SinglePatientProps) => {
       <Typography variant="h4" sx={{ pt: 4, pb: 2 }}>
         {patient.name}
       </Typography>
+      {/* <Button variant="contained" sx={{ my: 2 }}>
+        Add entry
+      </Button> */}
+      <AddEntryForm />
       <Box sx={{ border: 1, p: 1 }}>
         <Typography variant="body1">
           <b>id:</b> {patient.id}
