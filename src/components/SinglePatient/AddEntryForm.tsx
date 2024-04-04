@@ -1,8 +1,9 @@
-import { SyntheticEvent, useState } from "react";
+import { SyntheticEvent, useState, useEffect } from "react";
 import entriesService from "../../services/entries";
+import diagnosesService from "../../services/diagnoses";
 import { useParams } from "react-router-dom";
-import { EntryFormValues } from "../../types";
-import Alert from '@mui/material/Alert';
+import { EntryFormValues, Diagnosis } from "../../types";
+import { Alert, FormControl, Input } from "@mui/material";
 import axios from "axios";
 
 import {
@@ -16,18 +17,36 @@ import {
   Button,
   SelectChangeEvent,
 } from "@mui/material";
+import { Label } from "@mui/icons-material";
 
+const AddEntryForm = ({ entries, setEntries }) => {
+  // const [errorMessage, setErrorMessage] = useState<string|null>(null);
+  // const [type, setType] = useState("");
+  // const [description, setDescription] = useState("");
+  // const [date, setDate] = useState("");
+  // const [specialist, setSpecialist] = useState("");
+  // const [healthCheckRating, setHealthCheckRating] = useState("");
+  // const [diagnosisCodes, setDiagnosisCodes] = useState([]);
+  // const [availableDiagnosisCodes, setAvailableDiagnosisCodes] = useState<Diagnosis[]>([]);
 
-const AddEntryForm = () => {
-  const [errorMessage, setErrorMessage] = useState<string|null>(null);
-  const [type, setType] = useState("");
-  const [description, setDescription] = useState("");
-  const [date, setDate] = useState("");
-  const [specialist, setSpecialist] = useState("");
-  const [healthCheckRating, setHealthCheckRating] = useState("");
-  const [diagnosisCodes, setDiagnosisCodes] = useState<string[]>([""]);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [type, setType] = useState("HealthCheck");
+  const [description, setDescription] = useState("asd");
+  const [date, setDate] = useState("2020-12-12");
+  const [specialist, setSpecialist] = useState("asd");
+  const [healthCheckRating, setHealthCheckRating] = useState("1");
+  const [diagnosisCodes, setDiagnosisCodes] = useState([]);
+  const [availableDiagnosisCodes, setAvailableDiagnosisCodes] = useState<
+    Diagnosis[]
+  >([]);
 
   const id = useParams().id;
+
+  useEffect(() => {
+    diagnosesService
+      .getAll()
+      .then((result) => setAvailableDiagnosisCodes(result));
+  }, []);
 
   const addEntry = async (event: SyntheticEvent) => {
     event.preventDefault();
@@ -38,11 +57,11 @@ const AddEntryForm = () => {
         date,
         specialist,
         healthCheckRating,
-        //diagnosisCodes
+        diagnosisCodes,
       };
       try {
         const result = await entriesService.addNew(id, entryObject);
-        console.log(result);
+        setEntries(entries.concat(result.data))
       } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
           setErrorMessage(error.response.data);
@@ -50,7 +69,7 @@ const AddEntryForm = () => {
             setErrorMessage(null);
           }, 5000);
         } else {
-          console.log('Unknown error');
+          console.log(error)
         }
       }
     }
@@ -58,6 +77,8 @@ const AddEntryForm = () => {
 
   return (
     <div>
+      {`${type}_menu`}
+
       <Typography variant="h6" sx={{ mb: 2 }}>
         Add new entry
       </Typography>
@@ -78,13 +99,13 @@ const AddEntryForm = () => {
             value={description}
             onChange={({ target }) => setDescription(target.value)}
           />
-          <TextField
+          {/* <TextField
             sx={{ mb: 2 }}
             label="date"
             fullWidth
             value={date}
             onChange={({ target }) => setDate(target.value)}
-          />
+          /> */}
           <TextField
             sx={{ mb: 2 }}
             label="specialist"
@@ -92,25 +113,50 @@ const AddEntryForm = () => {
             value={specialist}
             onChange={({ target }) => setSpecialist(target.value)}
           />
-          <TextField
+          {/* <TextField
             sx={{ mb: 2 }}
             label="healthCheckRating"
             fullWidth
             value={healthCheckRating}
             onChange={({ target }) => setHealthCheckRating(target.value)}
-          />
-          {/* <TextField
-            sx={{ mb: 2 }}
-            label="diagnosisCodes"
-            fullWidth
-            value={diagnosisCodes}
-            onChange={({ target }) => setDiagnosisCodes(diagnosisCodes.concat(target.value))}
           /> */}
-          <Button
-            type="submit"
-            variant="contained"
-          >
-          Add new
+          <FormControl fullWidth>
+            <InputLabel>Health check rating</InputLabel>
+            <Select
+              value={healthCheckRating}
+              onChange={(event) => setHealthCheckRating(event.target.value)}
+            >
+              <MenuItem value={0}>Healthy</MenuItem>
+              <MenuItem value={1}>Low risk</MenuItem>
+              <MenuItem value={2}>High risk</MenuItem>
+              <MenuItem value={3}>Critical risk</MenuItem>
+            </Select>
+          </FormControl>
+          <FormControl fullWidth>
+            <InputLabel>Diagnosis codes</InputLabel>
+            <Select
+              multiple
+              value={diagnosisCodes}
+              onChange={({ target }) =>
+                setDiagnosisCodes(diagnosisCodes.concat(target.value))
+              }
+            >
+              {availableDiagnosisCodes.map((diagnosis) => (
+                <MenuItem key={diagnosis.code} value={diagnosis.code}>
+                  {diagnosis.code} {diagnosis.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <InputLabel>Date:</InputLabel>
+          <Input
+            value={date}
+            type="date"
+            onChange={(event) => setDate(event.target.value)}
+          />
+          <br></br>
+          <Button type="submit" variant="contained">
+            Add new
           </Button>
         </form>
       </Box>

@@ -41,7 +41,7 @@ const diagnosisSection = (diagnoses: Diagnosis[]) => {
       <b>Diagnosis codes:</b>
       <ul>
         {diagnoses.map((diagnosis) => (
-          <li key={diagnosis.code}>
+          <li key={crypto.randomUUID()}>
             {diagnosis.code} {diagnosis.name}
           </li>
         ))}
