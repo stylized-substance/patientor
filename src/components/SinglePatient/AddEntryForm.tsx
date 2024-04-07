@@ -2,9 +2,9 @@ import { SyntheticEvent, useState, useEffect } from "react";
 import entriesService from "../../services/entries";
 import diagnosesService from "../../services/diagnoses";
 import { useParams } from "react-router-dom";
-import { EntryFormValues, Diagnosis } from "../../types";
+import { EntryFormValues, Diagnosis, Entry } from "../../types";
 import { Alert, FormControl, Input } from "@mui/material";
-import { DatePicker } from '@mui/x-date-pickers/DatePicker'
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs, { Dayjs } from 'dayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -23,37 +23,31 @@ import {
 } from "@mui/material";
 import { Label } from "@mui/icons-material";
 
-const AddEntryForm = ({ entries, setEntries }) => {
-  // const [errorMessage, setErrorMessage] = useState<string|null>(null);
-  // const [type, setType] = useState("");
-  // const [description, setDescription] = useState("");
-  // const [date, setDate] = useState("");
-  // const [specialist, setSpecialist] = useState("");
-  // const [healthCheckRating, setHealthCheckRating] = useState("");
-  // const [diagnosisCodes, setDiagnosisCodes] = useState([]);
-  // const [availableDiagnosisCodes, setAvailableDiagnosisCodes] = useState<Diagnosis[]>([]);
+interface Props {
+  id: string
+  entries: Entry[] | undefined;
+  setEntries: React.Dispatch<React.SetStateAction<Entry[]>>;
+}
 
+
+const AddEntryForm = ({ id, entries, setEntries }: Props) => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [type, setType] = useState("OccupationalHealthcare");
-  const [employerName, setEmployerName] = useState("")
-  const [sickLeaveStartDate, setSickLeaveStartDate] = useState<Dayjs | null>(null)
-  const [sickLeaveEndDate, setSickLeaveEndDate] = useState<Dayjs | null>(null)
+  const [employerName, setEmployerName] = useState("");
+  const [sickLeaveStartDate, setSickLeaveStartDate] = useState<Dayjs | null>(null);
+  const [sickLeaveEndDate, setSickLeaveEndDate] = useState<Dayjs | null>(null);
   const [description, setDescription] = useState("asd");
-  const [date, setDate] = useState<Dayjs | null>(null)
+  const [date, setDate] = useState<Dayjs | null>(null);
   const [specialist, setSpecialist] = useState("asd");
   const [healthCheckRating, setHealthCheckRating] = useState("1");
   const [diagnosisCodes, setDiagnosisCodes] = useState<string[]>([]);
-  const [dischargeDate, setDischargeDate] = useState<Dayjs | null>(null)
-  const [dischargeCriteria, setDischargeCriteria] = useState("")
+  const [dischargeDate, setDischargeDate] = useState<Dayjs | null>(null);
+  const [dischargeCriteria, setDischargeCriteria] = useState("");
   const [availableDiagnosisCodes, setAvailableDiagnosisCodes] = useState<Diagnosis[]>([]);
   
-  const showOccupationalHealthCareEntries = type === "OccupationalHealthcare" ? true : false
-  const showDischargeEntry = type === "HospitalEntry" ? true : false
-  const showHealthCheckRatingEntry = type === "HealthCheck" ? true : false
-
-  console.log(type, showDischargeEntry)
-
-  const id = useParams().id;
+  const showOccupationalHealthCareEntries = type === "OccupationalHealthcare" ? true : false;
+  const showDischargeEntry = type === "HospitalEntry" ? true : false;
+  const showHealthCheckRatingEntry = type === "HealthCheck" ? true : false;
 
   useEffect(() => {
     diagnosesService
@@ -74,12 +68,12 @@ const AddEntryForm = ({ entries, setEntries }) => {
       };
 
       if (entryObject.type === "OccupationalHealthCare") {
-        entryObject.employerName = employerName
+        entryObject.employerName = employerName;
         if (sickLeaveStartDate && sickLeaveEndDate) {
           entryObject.sickLeave = {
             startDate: sickLeaveStartDate.toString(),
             endDate: sickLeaveEndDate.toString()
-          }
+          };
         }
       }
 
@@ -87,16 +81,16 @@ const AddEntryForm = ({ entries, setEntries }) => {
         entryObject.discharge = {
           date: dischargeDate,
           criteria: dischargeCriteria
-        }
+        };
       }
 
       if (entryObject.type === "HealthCheck") {
-        entryObject.healthCheckRating = healthCheckRating
+        entryObject.healthCheckRating = healthCheckRating;
       }
       
       try {
         const result = await entriesService.addNew(id, entryObject);
-        setEntries(entries.concat(result.data))
+        setEntries(entries.concat(result.data));
       } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
           setErrorMessage(error.response.data);
@@ -104,7 +98,7 @@ const AddEntryForm = ({ entries, setEntries }) => {
             setErrorMessage(null);
           }, 5000);
         } else {
-          console.log(error)
+          console.log(error);
         }
       }
     }

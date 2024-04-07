@@ -1,48 +1,39 @@
 import { Patient, Entry } from "../../types";
 import { useParams } from "react-router-dom";
 import PatientEntry from "./PatientEntry";
-import AddEntryForm from "./AddEntryForm"
-import { Typography, Box, } from "@mui/material";
+import AddEntryForm from "./AddEntryForm";
+import { Typography, Box } from "@mui/material";
 import { useState, useEffect } from "react";
-import patientsService from '../../services/patients'
+import patientsService from "../../services/patients";
 
-interface SinglePatientProps {
-  patients: Patient[];
-}
+const SinglePatient = () => {
+  const id = useParams().id as string;
+  const [entries, setEntries] = useState<Entry[] | undefined>([]);
+  const [patient, setPatient] = useState<Patient | null>(null);
 
-const SinglePatient = ({ patients }: SinglePatientProps) => {
-  const id = useParams().id;
-  const [entries, setEntries] = useState<Entry[] | undefined>([])
-  const [patient, setPatient] = useState<Patient | null>(null)
-  
   useEffect(() => {
-    // const patient = patients.find((patient) => patient.id === id);
     const getPatient = async () => {
-      const patient = await patientsService.getOne(id)
+      const patient: Patient = await patientsService.getOne(id);
       if (patient) {
-        setPatient(patient)
-        setEntries(patient.entries)  
+        setPatient(patient);
+        if (patient.entries) {
+          setEntries(patient.entries);
+        }
       }
-    // if (id) {
-    // }
-  }
-  getPatient()
-  }, [])
-  
+    };
+    getPatient();
+  }, []);
+
   if (!patient) {
     return null;
   }
 
-  
   return (
     <div>
       <Typography variant="h4" sx={{ pt: 4, pb: 2 }}>
         {patient.name}
       </Typography>
-      {/* <Button variant="contained" sx={{ my: 2 }}>
-        Add entry
-      </Button> */}
-      <AddEntryForm entries={entries} setEntries={setEntries}/>
+      <AddEntryForm id={id} entries={entries} setEntries={setEntries} />
       <Box sx={{ border: 1, p: 1 }}>
         <Typography variant="body1">
           <b>id:</b> {patient.id}
