@@ -1,12 +1,11 @@
 import { SyntheticEvent, useState, useEffect } from "react";
 import entriesService from "../../services/entries";
 import diagnosesService from "../../services/diagnoses";
-import { useParams } from "react-router-dom";
 import { EntryFormValues, Diagnosis, Entry } from "../../types";
-import { Alert, FormControl, Input } from "@mui/material";
+import { Alert, FormControl } from "@mui/material";
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import dayjs, { Dayjs } from 'dayjs';
+import { Dayjs } from 'dayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import axios from "axios";
 
@@ -17,11 +16,8 @@ import {
   InputLabel,
   MenuItem,
   Select,
-  Grid,
   Button,
-  SelectChangeEvent,
 } from "@mui/material";
-import { Label } from "@mui/icons-material";
 
 interface Props {
   id: string
@@ -33,7 +29,7 @@ interface Props {
 const AddEntryForm = ({ id, entries, setEntries }: Props) => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [type, setType] = useState("OccupationalHealthcare");
-  const [employerName, setEmployerName] = useState("");
+  const [employerName, setEmployerName] = useState<string>("asd");
   const [sickLeaveStartDate, setSickLeaveStartDate] = useState<Dayjs | null>(null);
   const [sickLeaveEndDate, setSickLeaveEndDate] = useState<Dayjs | null>(null);
   const [description, setDescription] = useState("asd");
@@ -54,7 +50,6 @@ const AddEntryForm = ({ id, entries, setEntries }: Props) => {
       .getAll()
       .then((result) => setAvailableDiagnosisCodes(result));
   }, []);
-
 
   const addEntry = async (event: SyntheticEvent) => {
     event.preventDefault();

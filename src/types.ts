@@ -1,3 +1,5 @@
+import { Dayjs } from "dayjs";
+
 export interface Diagnosis {
   code: string;
   name: string;
@@ -46,12 +48,14 @@ export interface HealthCheck extends BaseEntry {
   healthCheckRating: HealthCheckRating;
 }
 
+export type BaseEntryWithoutId = Omit<BaseEntry, "id">;
+
 export type Entry = OccupationalHealthcareEntry | HospitalEntry | HealthCheck;
 
 export interface EntryFormValues {
   type: string;
   description: string;
-  date: string;
+  date: Dayjs;
   specialist: string;
   diagnosisCodes: Array<string>;
   employerName?: string;

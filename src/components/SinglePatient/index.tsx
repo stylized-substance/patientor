@@ -8,7 +8,7 @@ import patientsService from "../../services/patients";
 
 const SinglePatient = () => {
   const id = useParams().id as string;
-  const [entries, setEntries] = useState<Entry[] | undefined>([]);
+  const [entries, setEntries] = useState<Entry[] | []>([]);
   const [patient, setPatient] = useState<Patient | null>(null);
 
   useEffect(() => {
@@ -33,7 +33,6 @@ const SinglePatient = () => {
       <Typography variant="h4" sx={{ pt: 4, pb: 2 }}>
         {patient.name}
       </Typography>
-      <AddEntryForm id={id} entries={entries} setEntries={setEntries} />
       <Box sx={{ border: 1, p: 1 }}>
         <Typography variant="body1">
           <b>id:</b> {patient.id}
@@ -50,6 +49,7 @@ const SinglePatient = () => {
           <br></br>
         </Typography>
       </Box>
+      <AddEntryForm id={id} entries={entries} setEntries={setEntries} />
       <Typography variant="h4" sx={{ pt: 4, pb: 2 }}>
         Entries
       </Typography>
