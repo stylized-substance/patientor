@@ -30,7 +30,7 @@ const AddEntryForm = ({ id, entries, setEntries }: Props) => {
   const [type, setType] = useState<string>("Hospital");
   const [employerName, setEmployerName] = useState<string>("asd");
   const [sickLeaveStartDate, setSickLeaveStartDate] = useState<Dayjs | null>(
-    null
+    null,
   );
   const [sickLeaveEndDate, setSickLeaveEndDate] = useState<Dayjs | null>(null);
   const [description, setDescription] = useState<string>("asd");
@@ -44,7 +44,8 @@ const AddEntryForm = ({ id, entries, setEntries }: Props) => {
     Diagnosis[]
   >([]);
 
-  const showOccupationalHealthCareEntries = type === "OccupationalHealthcare" ? true : false;
+  const showOccupationalHealthCareEntries =
+    type === "OccupationalHealthcare" ? true : false;
   const showDischargeEntry = type === "Hospital" ? true : false;
   const showHealthCheckRatingEntry = type === "HealthCheck" ? true : false;
 
@@ -86,13 +87,10 @@ const AddEntryForm = ({ id, entries, setEntries }: Props) => {
           break;
         }
       }
-      
+
       try {
         const result: Entry = await entriesService.addNew(id, entryObject);
-        const newState = [
-          ...entries,
-          result
-        ]
+        const newState = [...entries, result];
         setEntries(newState);
       } catch (error) {
         if (axios.isAxiosError(error) && error.response) {

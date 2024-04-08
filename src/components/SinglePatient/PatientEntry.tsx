@@ -106,7 +106,7 @@ const HospitalEntryInstance = ({ entry, diagnoses }: HospitalEntryProps) => {
       <b>Discharge:</b>
       <ul>
         <li>
-          <b>Date:</b> {entry.discharge.date}
+          <b>Date:</b> {entry.discharge.date.toString()}
         </li>
         <li>
           <b>Criteria:</b> {entry.discharge.criteria}

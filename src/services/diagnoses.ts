@@ -12,9 +12,7 @@ const getOne = async (code: string) => {
 };
 
 const getAll = async () => {
-  const { data } = await axios.get<Diagnosis[]>(
-    `${apiBaseUrl}/diagnoses/`
-  );
+  const { data } = await axios.get<Diagnosis[]>(`${apiBaseUrl}/diagnoses/`);
   return data;
 };
 
