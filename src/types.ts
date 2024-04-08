@@ -38,7 +38,7 @@ export interface OccupationalHealthcareEntry extends BaseEntry {
 export interface HospitalEntry extends BaseEntry {
   type: "Hospital";
   discharge: {
-    date: string;
+    date: Dayjs | null;
     criteria: string;
   };
 }
@@ -55,16 +55,16 @@ export type Entry = OccupationalHealthcareEntry | HospitalEntry | HealthCheck;
 export interface EntryFormValues {
   type: string;
   description: string;
-  date: Dayjs;
+  date: Dayjs | null;
   specialist: string;
   diagnosisCodes: Array<string>;
   employerName?: string;
   sickLeave?: {
-    startDate: string;
-    endDate: string;
+    startDate: Dayjs | null;
+    endDate: Dayjs | null;
   };
   discharge?: {
-    date: string;
+    date: Dayjs | null;
     criteria: string;
   }
   healthCheckRating?: string;

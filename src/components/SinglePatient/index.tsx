@@ -8,7 +8,7 @@ import patientsService from "../../services/patients";
 
 const SinglePatient = () => {
   const id = useParams().id as string;
-  const [entries, setEntries] = useState<Entry[] | []>([]);
+  const [entries, setEntries] = useState<Entry[]>([]);
   const [patient, setPatient] = useState<Patient | null>(null);
 
   useEffect(() => {

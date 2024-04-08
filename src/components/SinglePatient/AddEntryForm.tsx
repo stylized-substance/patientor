@@ -3,10 +3,10 @@ import entriesService from "../../services/entries";
 import diagnosesService from "../../services/diagnoses";
 import { EntryFormValues, Diagnosis, Entry } from "../../types";
 import { Alert, FormControl } from "@mui/material";
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { Dayjs } from 'dayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { Dayjs } from "dayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import axios from "axios";
 
 import {
@@ -20,29 +20,32 @@ import {
 } from "@mui/material";
 
 interface Props {
-  id: string
-  entries: Entry[] | undefined;
+  id: string;
+  entries: Entry[] | [];
   setEntries: React.Dispatch<React.SetStateAction<Entry[]>>;
 }
 
-
 const AddEntryForm = ({ id, entries, setEntries }: Props) => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [type, setType] = useState("OccupationalHealthcare");
+  const [type, setType] = useState<string>("Hospital");
   const [employerName, setEmployerName] = useState<string>("asd");
-  const [sickLeaveStartDate, setSickLeaveStartDate] = useState<Dayjs | null>(null);
+  const [sickLeaveStartDate, setSickLeaveStartDate] = useState<Dayjs | null>(
+    null
+  );
   const [sickLeaveEndDate, setSickLeaveEndDate] = useState<Dayjs | null>(null);
-  const [description, setDescription] = useState("asd");
+  const [description, setDescription] = useState<string>("asd");
   const [date, setDate] = useState<Dayjs | null>(null);
-  const [specialist, setSpecialist] = useState("asd");
+  const [specialist, setSpecialist] = useState<string>("asd");
   const [healthCheckRating, setHealthCheckRating] = useState("1");
   const [diagnosisCodes, setDiagnosisCodes] = useState<string[]>([]);
   const [dischargeDate, setDischargeDate] = useState<Dayjs | null>(null);
-  const [dischargeCriteria, setDischargeCriteria] = useState("");
-  const [availableDiagnosisCodes, setAvailableDiagnosisCodes] = useState<Diagnosis[]>([]);
-  
+  const [dischargeCriteria, setDischargeCriteria] = useState<string>("asd");
+  const [availableDiagnosisCodes, setAvailableDiagnosisCodes] = useState<
+    Diagnosis[]
+  >([]);
+
   const showOccupationalHealthCareEntries = type === "OccupationalHealthcare" ? true : false;
-  const showDischargeEntry = type === "HospitalEntry" ? true : false;
+  const showDischargeEntry = type === "Hospital" ? true : false;
   const showHealthCheckRatingEntry = type === "HealthCheck" ? true : false;
 
   useEffect(() => {
@@ -62,30 +65,35 @@ const AddEntryForm = ({ id, entries, setEntries }: Props) => {
         diagnosisCodes,
       };
 
-      if (entryObject.type === "OccupationalHealthCare") {
-        entryObject.employerName = employerName;
-        if (sickLeaveStartDate && sickLeaveEndDate) {
+      switch (entryObject.type) {
+        case "OccupationalHealthcare": {
+          entryObject.employerName = employerName;
           entryObject.sickLeave = {
-            startDate: sickLeaveStartDate.toString(),
-            endDate: sickLeaveEndDate.toString()
+            startDate: sickLeaveStartDate,
+            endDate: sickLeaveEndDate,
           };
+          break;
         }
-      }
-
-      if (entryObject.type === "Hospital") {
-        entryObject.discharge = {
-          date: dischargeDate,
-          criteria: dischargeCriteria
-        };
-      }
-
-      if (entryObject.type === "HealthCheck") {
-        entryObject.healthCheckRating = healthCheckRating;
+        case "Hospital": {
+          entryObject.discharge = {
+            date: dischargeDate,
+            criteria: dischargeCriteria,
+          };
+          break;
+        }
+        case "HealthCheck": {
+          entryObject.healthCheckRating = healthCheckRating;
+          break;
+        }
       }
       
       try {
-        const result = await entriesService.addNew(id, entryObject);
-        setEntries(entries.concat(result.data));
+        const result: Entry = await entriesService.addNew(id, entryObject);
+        const newState = [
+          ...entries,
+          result
+        ]
+        setEntries(newState);
       } catch (error) {
         if (axios.isAxiosError(error) && error.response) {
           setErrorMessage(error.response.data);
@@ -107,50 +115,54 @@ const AddEntryForm = ({ id, entries, setEntries }: Props) => {
       {errorMessage && <Alert severity="error">{errorMessage}</Alert>}
       <Box sx={{ mb: 2, boxShadow: 2 }}>
         <form onSubmit={addEntry}>
-        <FormControl fullWidth>
+          <FormControl fullWidth>
             <InputLabel>Entry type:</InputLabel>
             <Select
+              sx={{ mb: 2 }}
               value={type}
               onChange={(event) => setType(event.target.value)}
             >
-              <MenuItem value={"OccupationalHealthcare"}>Occupational healthcare</MenuItem>
-              <MenuItem value={"HospitalEntry"}>Hospital entry</MenuItem>
+              <MenuItem value={"OccupationalHealthcare"}>
+                Occupational healthcare
+              </MenuItem>
+              <MenuItem value={"Hospital"}>Hospital entry</MenuItem>
               <MenuItem value={"HealthCheck"}>Health check</MenuItem>
             </Select>
           </FormControl>
-          {showOccupationalHealthCareEntries &&
-          <>
-            <TextField
-              sx={{ mb: 2 }}
-              label="Employer name"
-              fullWidth
-              value={employerName}
-              onChange={({ target }) => setEmployerName(target.value)}
-            />
-          <InputLabel sx={{ mb: 2 }}>Sick leave:</InputLabel>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DatePicker
-              label="start"
-              value={sickLeaveStartDate}
-              onChange={(value) => setSickLeaveStartDate(value)}
-            />
-            <DatePicker
-              sx={{ mb: 2 }}
-              label="end"
-              value={sickLeaveEndDate}
-              onChange={(value) => setSickLeaveEndDate(value)}
-            />
-          </LocalizationProvider>
-          </>
-          }
-          {showDischargeEntry &&
+          {showOccupationalHealthCareEntries && (
+            <>
+              <TextField
+                sx={{ mb: 2 }}
+                label="Employer name"
+                fullWidth
+                value={employerName}
+                onChange={({ target }) => setEmployerName(target.value)}
+              />
+              <InputLabel sx={{ mb: 2 }}>Sick leave:</InputLabel>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  label="start"
+                  value={sickLeaveStartDate}
+                  onChange={(value) => setSickLeaveStartDate(value)}
+                />
+                <DatePicker
+                  sx={{ mb: 2 }}
+                  label="end"
+                  value={sickLeaveEndDate}
+                  onChange={(value) => setSickLeaveEndDate(value)}
+                />
+              </LocalizationProvider>
+            </>
+          )}
+          {showDischargeEntry && (
             <>
               <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker
-                label="Discharge date"
-                value={dischargeDate}
-                onChange={(value) => setDischargeDate(value)}
-              />
+                <DatePicker
+                  sx={{ mb: 2 }}
+                  label="Discharge date"
+                  value={dischargeDate}
+                  onChange={(value) => setDischargeDate(value)}
+                />
               </LocalizationProvider>
               <TextField
                 sx={{ mb: 2 }}
@@ -159,16 +171,8 @@ const AddEntryForm = ({ id, entries, setEntries }: Props) => {
                 value={dischargeCriteria}
                 onChange={({ target }) => setDischargeCriteria(target.value)}
               />
-
-              <TextField
-                sx={{ mb: 2 }}
-                label="description"
-                fullWidth
-                value={description}
-                onChange={({ target }) => setDescription(target.value)}
-              />
             </>
-            }
+          )}
           <TextField
             sx={{ mb: 2 }}
             label="description"
@@ -183,7 +187,7 @@ const AddEntryForm = ({ id, entries, setEntries }: Props) => {
             value={specialist}
             onChange={({ target }) => setSpecialist(target.value)}
           />
-          {showHealthCheckRatingEntry &&
+          {showHealthCheckRatingEntry && (
             <FormControl fullWidth>
               <InputLabel>Health check rating</InputLabel>
               <Select
@@ -197,7 +201,7 @@ const AddEntryForm = ({ id, entries, setEntries }: Props) => {
                 <MenuItem value={3}>Critical risk</MenuItem>
               </Select>
             </FormControl>
-          }
+          )}
           <FormControl fullWidth>
             <InputLabel>Diagnosis codes</InputLabel>
             <Select
